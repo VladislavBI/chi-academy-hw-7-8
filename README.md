@@ -35,7 +35,7 @@ Tables:
 
 - ASP.NET Core
 - MVC
-- Entity Framework Code
+- Entity Framework Core
 - MS SQL Server
 - HTML/CSS
 - JQuery
