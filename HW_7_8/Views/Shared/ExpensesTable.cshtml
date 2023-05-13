@@ -1,0 +1,58 @@
+﻿@using System.Globalization;
+@using HW_7_8.Data.ViewModels;
+@model ExpensesListViewModel
+
+<div class="d-flex justify-content-between align-items-center my-3">
+    <h1 class="m-0">@Model.MonthName @Model.Year </h1>
+    <form asp-controller="Expenses" asp-action="MonthExpenses" method="get" class="d-flex justify-content-end align-items-center">
+        <select class="form-select select-field" asp-for="MonthName" asp-items="@Model.MonthNamesSelectList"></select>
+        <select class="form-select mx-3" asp-for="Year" asp-items="@Model.YearsSelectList"></select>
+        <div>
+            <input class="btn btn-success" type="submit" value="View expenses" />
+        </div>
+    </form>
+</div>
+
+<a class="btn btn-primary my-3" asp-controller="Expenses" asp-action="Add">Add expense</a>
+
+<table class="table table-fixed my-3">
+  <thead class="thead-light">
+    <tr>
+      <th scope="col" class="col-3">Date</th>
+      <th scope="col" class="col-2">Category</th>
+      <th scope="col" class="col-2">Cost</th>
+      <th scope="col" class="col-3">Comment</th>
+      <th scope="col" class="col-2"></th>
+    </tr>
+  </thead>
+  <tbody>
+        @foreach(Expense expense in Model.Expenses)
+        {
+            <tr>
+              <td>@expense.DateCreated.ToString("dd.MM.yyyy")</td>
+              <td>@expense.ExpenseCategory.Name</td>
+              <td>@expense.Cost</td>
+              @if(@expense.Comment == null) 
+              {
+                <td>No comment</td>
+              } 
+              else
+              {
+                <td>@expense.Comment</td>
+              }
+              <td class="d-flex justify-content-start">
+                <a class="btn btn-secondary-light btn-secondary me-2" asp-controller="Expenses" asp-action="Edit" asp-route-id="@expense.Id">Edit</a>
+                <form asp-controller="Expenses" asp-action="Delete" asp-route-id="@expense.Id">
+                    <button class="btn btn-secondary-light btn-secondary" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="2"><b>Total expenses for the month</b></td>
+            <td><b>@Model.TotalCost</b></td>
+            <td></td>
+            <td></td>
+        </tr>
+  </tbody>
+</table>

@@ -1,0 +1,59 @@
+﻿@model ExpenseAddViewModel
+@inject CategoryRepository Repository
+@{
+    ViewBag.Title = "Add new expense";
+    var categories = Repository.Categories;
+    var categoriesSelectList = new List<SelectListItem>();
+    foreach (var categoty in categories)
+    {
+        categoriesSelectList.Add(new SelectListItem { Text = categoty.Name, Value = categoty.Id.ToString() });
+    }
+    var currentDate = @DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<div class="d-flex flex-column">
+    <h1 class="my-3">@ViewBag.Title</h1>
+
+    <span class="validation-error text-danger">
+        @Html.ValidationSummary(true)
+    </span>
+    <form asp-controller="Expenses" asp-action="Add" method="post" class="form-horizontal my-3">
+        <div class="row required mb-3">
+            <div>
+                <label class="form-label control-label">Date</label>
+                <input asp-for="DateCreated" type="date" value="@currentDate" class="form-control date-input-field" placeholder="Select date" lang="en-US" max="@currentDate" />
+                <span asp-validation-for="DateCreated" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row required mb-3">
+            <label class="form-label control-label">Category</label>
+            <div class="d-flex justify-content-start">
+                <div class="me-3">
+                    <select class="form-select" asp-for="SelectedCategoryId" asp-items="@categoriesSelectList">
+                        <option value="">Select category</option>
+                    </select>
+                    <span asp-validation-for="SelectedCategoryId" class="text-danger"></span>
+                </div>
+                <a class="btn btn-secondary-light hover-blue btn-fixed-height" asp-controller="Categories" asp-action="Add">Add category</a>
+            </div>
+        </div>
+        <div class="row required mb-3">
+            <label class="form-label control-label" asp-for="Cost"></label>
+            <div>
+                <input asp-for="Cost" class="form-control" placeholder="Enter cost" min="0"/>
+                <span asp-validation-for="Cost" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="form-label" asp-for="Comment"></label>
+            <div>
+                <input asp-for="Comment" class="form-control" type="text" placeholder="Enter comment"/>
+            </div>
+        </div>
+       @* <input type="hidden" asp-for="DateCreated" value="@DateTime.Now" />*@
+        <div class="d-flex justify-content-end mt-4">
+            <input class="btn btn-success me-3" type="submit" value="Add expense" />
+            <a class="btn btn-secondary-light btn-secondary" asp-controller="Expenses" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,7 @@
+﻿@model ExpensesListViewModel
+
+@{
+    ViewBag.Title = @Model.MonthName + " " + @Model.Year;
+}
+
+@await Html.PartialAsync("ExpensesTable", @Model)
