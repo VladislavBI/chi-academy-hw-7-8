@@ -1,0 +1,29 @@
+﻿@model CategoryAddViewModel
+
+@{
+    ViewBag.Title = "Add new category";
+}
+
+<div class="d-flex flex-column">
+    <h1 class="my-3">@ViewBag.Title</h1>
+
+    <span class="validation-error text-danger">
+        @Html.ValidationSummary(true)
+    </span>
+    <p>@Model.ReturnUrl</p>
+    
+    <form asp-controller="Categories" asp-action="Add" method="post" class="form-horizontal my-3">
+        <div class="row required mb-3">
+            <label asp-for="Name" class="form-label control-label"></label>
+            <div>
+                <input asp-for="Name" class="form-control" placeholder="Enter name"/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+        </div>
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div class="d-flex justify-content-end mt-4">
+            <input class="btn btn-success me-3" type="submit" value="Add category" />
+            <a class="btn btn-secondary-light btn-secondary" href="@Model.ReturnUrl">Cancel</a>
+        </div>
+    </form>
+</div>

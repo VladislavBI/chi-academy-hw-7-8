@@ -1,0 +1,50 @@
+﻿.bg-blue {
+    background-color: #03A0F8 !important
+}
+
+.btn-secondary-light {
+    color: #222 !important;
+    background-color: #efefef !important;
+    border-color: #efefef !important;
+}
+
+.btn-secondary-light:hover {
+    color: #fff !important;
+    background-color: #9d9d9d  !important;
+    border-color: #9d9d9d !important;
+}
+
+.btn-secondary-light {
+    color: #222 !important;
+    background-color: #efefef !important;
+    border-color: #efefef !important;
+}
+
+.btn-secondary-light:hover {
+    color: #fff !important;
+    background-color: #9d9d9d !important;
+    border-color: #9d9d9d !important;
+}
+
+.btn-secondary-light.hover-blue:hover{
+    color: #fff !important;
+    background-color: #0d6efd !important;
+    border-color: #0d6efd !important;
+}
+
+.row.required .control-label:after {
+    content: " *";
+    color: red;
+}
+
+.select-field {
+    min-width: 136px
+}
+
+.date-input-field {
+    max-width: 160px
+}
+
+.btn-fixed-height {
+   max-height: 38px
+}

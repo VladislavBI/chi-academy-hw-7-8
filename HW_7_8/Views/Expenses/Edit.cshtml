@@ -1,0 +1,50 @@
+﻿@model ExpenseEditViewModel
+@inject CategoryRepository Repository
+@{
+    ViewBag.Title = "Edit expense";
+    var categories = Repository.Categories;
+    var categoriesSelectList = new List<SelectListItem>();
+    foreach (var categoty in categories)
+    {
+        categoriesSelectList.Add(new SelectListItem { Text = categoty.Name, Value = categoty.Id.ToString() });
+    }
+}
+
+<div class="d-flex flex-column">
+    <h1 class="my-3">@ViewBag.Title</h1>
+
+    <span class="validation-error text-danger">
+        @Html.ValidationSummary(true)
+    </span>
+
+    <p>@Model.ReturnUrl</p>
+
+    <form asp-controller="Expenses" asp-action="Edit" method="post" class="form-horizontal my-3">
+        <div class="row required mb-3">
+            <label class="form-label control-label">Category</label>
+            <div>
+                <select class="form-select" asp-for="SelectedCategoryId" asp-items="@categoriesSelectList"></select>
+                <span asp-validation-for="SelectedCategoryId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row required mb-3">
+            <label class="form-label control-label" asp-for="Cost"></label>
+            <div>
+                <input asp-for="Cost" class="form-control" placeholder="Enter cost"/>
+                <span asp-validation-for="Cost" class="text-danger" ></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="form-label" asp-for="Comment"></label>
+            <div>
+                <input asp-for="Comment" class="form-control" type="text" placeholder="Enter comment" />
+                <span asp-validation-for="Comment" class="text-danger"></span>
+            </div>
+        </div>
+        <input type="hidden" asp-for="ReturnUrl"/>
+        <div class="d-flex justify-content-end mt-4">
+            <input class="btn btn-success me-3" type="submit" value="Update" />
+            <a class="btn btn-secondary-light btn-secondary" href="@Model.ReturnUrl">Cancel</a>
+        </div>
+    </form>
+</div>

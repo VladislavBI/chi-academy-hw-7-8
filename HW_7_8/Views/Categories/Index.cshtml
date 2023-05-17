@@ -1,0 +1,31 @@
+﻿@model CategoriesListViewModel
+
+@{
+    ViewBag.Title = "Categories of expenses";
+}
+
+<h1 class="text-center my-3">@ViewBag.Title</h1>
+
+<div class="w-50 d-flex flex-column align-self-center">
+    <a class="btn btn-primary my-3" asp-controller="Categories" asp-action="Add">Add category</a>
+
+    <table class="table table-bordered table-hover my-3">
+      <tbody>
+          @foreach (var category in Model.Categories)
+          {
+              <tr>
+                  <td class="list-group-item d-flex justify-content-between">
+                    <div>@category.Name</div>
+                    <div class="d-flex justify-content-between">
+                        <a class="btn btn-secondary-light btn-secondary me-2" asp-controller="Categories" asp-action="Edit" asp-route-id="@category.Id" >Edit</a>
+                        <form asp-controller="Categories" asp-action="Delete"asp-route-id="@category.Id">
+                            <button class="btn btn-secondary-light btn-secondary" type="submit">Delete</button>
+                        </form>
+                    </div>
+                  </td>
+              </tr>
+          }
+      </tbody>
+    </table>
+    <caption>* When deleting the category, all expenses with this category will be deleted!</caption>
+</div>
