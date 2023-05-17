@@ -48,3 +48,15 @@
 .btn-fixed-height {
    max-height: 38px
 }
+
+.container-min-height {
+    min-height: 100vh
+}
+
+.center-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 56px;
+}
