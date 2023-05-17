@@ -29,7 +29,7 @@ namespace HW_7_8.Data.ViewModels
                 MonthNamesSelectList.Add(new SelectListItem { Text = month, Value = month });
             }
 
-            var years = Enumerable.Range(2020, DateTime.Now.Year - 2020 + 1).OrderDescending();
+            var years = Enumerable.Range(2019, DateTime.Now.Year - 2019 + 1).OrderDescending();
             YearsSelectList = new List<SelectListItem>();
             foreach (var year in years)
             {
