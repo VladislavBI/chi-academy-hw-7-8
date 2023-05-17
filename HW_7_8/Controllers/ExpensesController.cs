@@ -62,7 +62,10 @@ namespace HW_7_8.Controllers
                     ExpenseCategory = categoryRepository.GetCategoryById(Convert.ToInt32(model.SelectedCategoryId))
                 };
                 expensesRepository.Add(expense);
-                return RedirectToAction("Index");
+                var monthName = CultureInfo.InvariantCulture.DateTimeFormat.GetMonthName(expense.DateCreated.Month);
+                return RedirectToAction("MonthExpenses", 
+                    new { MonthName = monthName,
+                    Year = expense.DateCreated.Year}) ;
             }
             return View();
         }
@@ -102,7 +105,7 @@ namespace HW_7_8.Controllers
         public IActionResult Delete(int id)
         {
             expensesRepository.Delete(id);
-            return RedirectToAction("Index");
+            return Redirect(Request.Headers["Referer"].ToString());
         }
     }
 }

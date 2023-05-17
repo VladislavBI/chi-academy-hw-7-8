@@ -9,6 +9,7 @@
         categoriesSelectList.Add(new SelectListItem { Text = categoty.Name, Value = categoty.Id.ToString() });
     }
     var currentDate = @DateTime.Now.ToString("yyyy-MM-dd");
+    var minDate = "2019-01-01";
 }
 
 <div class="d-flex flex-column">
@@ -21,7 +22,7 @@
         <div class="row required mb-3">
             <div>
                 <label class="form-label control-label">Date</label>
-                <input asp-for="DateCreated" type="date" value="@currentDate" class="form-control date-input-field" placeholder="Select date" lang="en-US" max="@currentDate" />
+                <input asp-for="DateCreated" type="date" value="@currentDate" class="form-control date-input-field" placeholder="Select date" lang="en-US" max="@currentDate" min=@minDate/>
                 <span asp-validation-for="DateCreated" class="text-danger"></span>
             </div>
         </div>
