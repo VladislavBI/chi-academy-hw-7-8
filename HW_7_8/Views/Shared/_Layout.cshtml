@@ -10,24 +10,30 @@
     <script src="~/js/nav-item-active.js"></script>
   </head>
   <body>
-    
-    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary bg-dark" aria-label="Eighth navbar example">
-        <div class="container">
-            <a class="navbar-brand" href="/">Home Accounting</a>
-            <div class="collapse navbar-collapse ms-3">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="/">Expenses</a>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="/categories/">Categories</a>
-                    </li>
-                </ul>
+    <div class="container-min-height d-flex flex-column justify-content-between ">
+        <div>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-secondary bg-dark" aria-label="Eighth navbar example">
+                <div class="container">
+                    <a class="navbar-brand" href="/">Home Accounting</a>
+                    <div class="collapse navbar-collapse ms-3">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" href="/">Expenses</a>
+                            </li>
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" href="/categories/">Categories</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <div class="container d-flex flex-column justify-content-between mt-5 ">
+                @RenderBody()
             </div>
         </div>
-    </nav>
-    <div class="container d-flex flex-column justify-content-between mt-5 ">
-        @RenderBody()
-    </div> 
+        <footer class="center-container mt-5">
+            <p>Copyright © 2023 Yulia Biriukova</p>
+        </footer>
+    </div>
   </body>
 </html>
