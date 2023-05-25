@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:32597",
+      "applicationUrl": "http://home-accounting.local.com:32597",
       "sslPort": 44393
     }
   },
@@ -12,7 +12,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:5276",
+      "applicationUrl": "http://home-accounting.local.com:5276",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -21,7 +21,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:7000;http://localhost:5276",
+      "applicationUrl": "https://home-accounting.local.com:7000;http://home-accounting.local.com:5276",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
