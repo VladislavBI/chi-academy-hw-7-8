@@ -1,7 +1,7 @@
 ﻿using HW_7_8.Data.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HW_7_8.Controllers
 {
@@ -50,13 +50,15 @@ namespace HW_7_8.Controllers
         }
 
         [HttpPost("/auth/login")]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl)
         {
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
                 if (result.Succeeded)
                 {
+                    if(!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)) 
+                        return Redirect(returnUrl);
                     return RedirectToAction("Index", "Expenses");
                 }
 
@@ -66,6 +68,7 @@ namespace HW_7_8.Controllers
         }
 
         [HttpPost("/auth/logout")]
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();

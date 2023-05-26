@@ -1,11 +1,13 @@
 ﻿using HW_7_8.Data.Models;
 using HW_7_8.Data.Repositories;
 using HW_7_8.Data.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 
 namespace HW_7_8.Controllers
 {
+    [Authorize]
     [Route("/expenses")]
     public class ExpensesController : Controller
     {

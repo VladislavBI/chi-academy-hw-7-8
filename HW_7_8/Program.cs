@@ -25,6 +25,11 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(
     })
     .AddEntityFrameworkStores<HomeAccountingDbContext>();
 
+builder.Services.ConfigureApplicationCookie(config =>
+{
+    config.LoginPath = "/auth/login";
+});
+
 var app = builder.Build();
 
 app.UseRouting();
