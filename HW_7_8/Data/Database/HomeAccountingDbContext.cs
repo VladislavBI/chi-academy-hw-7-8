@@ -1,9 +1,10 @@
 ﻿using HW_7_8.Data.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace HW_7_8.Data.Database
 {
-    public class HomeAccountingDbContext : DbContext
+    public class HomeAccountingDbContext : IdentityDbContext
     {
         public DbSet<Category> Categories { get; set; }
 
@@ -13,6 +14,7 @@ namespace HW_7_8.Data.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Expense>().
                 HasOne(e => e.ExpenseCategory)
                 .WithMany()

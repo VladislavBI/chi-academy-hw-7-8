@@ -1,9 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@inject SignInManager<IdentityUser> signInManager;
+
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
+    <link rel="icon" type="image/x-icon" href="~/img/icon.png">
     <link rel="stylesheet" href="~/lib/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/style.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -12,17 +15,37 @@
   <body>
     <div class="container-min-height d-flex flex-column justify-content-between">
         <div>
-            <nav class="navbar navbar-expand-lg navbar-dark bg-secondary bg-dark" aria-label="Eighth navbar example">
+            <nav class="navbar navbar-expand-lg navbar-light bg-secondary bg-light" aria-label="Eighth navbar example">
                 <div class="container">
+                    <img class="logo-img me-2" src="~/img/icon.png" alt="Film Rater icon">
                     <a class="navbar-brand" href="/">Home Accounting</a>
-                    <div class="collapse navbar-collapse ms-3">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <div class="collapse navbar-collapse ms-3 d-flex justify-content-between">
+                        <ul class="navbar-nav">
                             <li class="nav-item mx-2">
                                 <a class="nav-link" href="/">Expenses</a>
                             </li>
                             <li class="nav-item mx-2">
                                 <a class="nav-link" href="/categories/">Categories</a>
                             </li>
+                        </ul>
+                        <ul class="navbar-nav">
+                            @if (signInManager.IsSignedIn(User))
+                            {
+                                <li class="nav-item mx-2">
+                                    <form method="post" asp-action="Logout" asp-controller="Auth">
+                                        <button type="submit" class="nav-link"> Logout </button>
+                                    </form>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item mx-2">
+                                    <a class="nav-link" asp-action="Register" asp-controller="Auth">Sign up</a>
+                                </li>
+                                <li class="nav-item mx-2">
+                                    <a class="nav-link" asp-action="Login" asp-controller="Auth">Log in</a>
+                                </li>
+                            }
                         </ul>
                     </div>
                 </div>
