@@ -24,13 +24,16 @@ namespace HW_7_8.Data.Repositories
             .Where(e => e.DateCreated.Month == month && e.DateCreated.Year == year)
             .OrderByDescending(e => e.DateCreated);
 
+        public IEnumerable<Expense> GetExpensesBy(int month, int year, string userId)
+            => dbContext.Expenses
+            .Include(e => e.ExpenseCategory)
+            .Where(e => e.DateCreated.Month == month && e.DateCreated.Year == year && e.User.Id == userId)
+            .OrderByDescending(e => e.DateCreated);
+
         public IEnumerable<Expense> GetExpensesBy(int month, int year, Category category) 
             => dbContext.Expenses
             .Include(e => e.ExpenseCategory)
             .Where(e => e.DateCreated.Month == month && e.DateCreated.Year == year && e.ExpenseCategory == category);
-
-        public int GetTotalCostByMonth(int month, int year)
-            => dbContext.Expenses.Where(e => e.DateCreated.Month == month && e.DateCreated.Year == year).Sum(e => e.Cost);
 
         public void Add(Expense expense)
         {

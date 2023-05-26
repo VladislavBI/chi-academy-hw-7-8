@@ -23,6 +23,9 @@ namespace HW_7_8.Data.Repositories
         public Category GetCategoryById(int id) 
             => dbContext.Categories.SingleOrDefault(c => c.Id == id);
 
+        public IEnumerable<Category> GetCategoriesByUserId(string userId)
+            => dbContext.Categories.Where(c => c.User.Id == userId || c.User.Id == null);
+
         public void Add(Category category)
         {
             dbContext.Categories.Add(category);

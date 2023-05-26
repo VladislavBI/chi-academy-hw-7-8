@@ -2,7 +2,9 @@
 using HW_7_8.Data.Repositories;
 using HW_7_8.Data.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace HW_7_8.Controllers
 {
@@ -11,17 +13,20 @@ namespace HW_7_8.Controllers
     public class CategoriesController : Controller
     {
         private readonly CategoryRepository categoryRepository;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public CategoriesController(CategoryRepository categoryRepository)
+        public CategoriesController(CategoryRepository categoryRepository, UserManager<IdentityUser> userManager)
         {
             this.categoryRepository = categoryRepository;
+            this.userManager = userManager;
         }
 
         [Route("")]
         public IActionResult Index()
         {
             var model = new CategoriesListViewModel();
-            model.Categories = categoryRepository.Categories;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            model.Categories = categoryRepository.GetCategoriesByUserId(userId);
             return View(model);
         }
 
@@ -36,16 +41,18 @@ namespace HW_7_8.Controllers
         }
 
         [HttpPost("/categories/add")]
-        public IActionResult Add(CategoryAddViewModel model)
+        public async Task<IActionResult> Add(CategoryAddViewModel model)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (ModelState.IsValid)
             {
-                categoryRepository.Add(new Category() { Name = model.Name });
+                categoryRepository.Add(new Category() 
+                { 
+                    Name = model.Name,
+                    User = await userManager.FindByIdAsync(userId)
+                });
 
-                if (Url.IsLocalUrl(model.ReturnUrl))
-                    return LocalRedirect(model.ReturnUrl);
-
-                return RedirectToAction("Index");
+                return Redirect(model.ReturnUrl);
             }
             return View(model); 
         }

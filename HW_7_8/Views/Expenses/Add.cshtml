@@ -2,7 +2,7 @@
 @inject CategoryRepository Repository
 @{
     ViewBag.Title = "Add new expense";
-    var categories = Repository.Categories;
+    var categories = Repository.GetCategoriesByUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
     var categoriesSelectList = new List<SelectListItem>();
     foreach (var categoty in categories)
     {
@@ -18,6 +18,7 @@
     <span class="validation-error text-danger">
         @Html.ValidationSummary(true)
     </span>
+
     <form asp-controller="Expenses" asp-action="Add" method="post" class="form-horizontal my-3">
         <div class="row required mb-3">
             <div>

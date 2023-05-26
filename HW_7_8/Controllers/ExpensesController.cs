@@ -2,8 +2,10 @@
 using HW_7_8.Data.Repositories;
 using HW_7_8.Data.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace HW_7_8.Controllers
 {
@@ -13,11 +15,13 @@ namespace HW_7_8.Controllers
     {
         private readonly ExpenseRepository expensesRepository;
         private readonly CategoryRepository categoryRepository;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public ExpensesController(ExpenseRepository expensesRepository, CategoryRepository categoryRepository)
+        public ExpensesController(ExpenseRepository expensesRepository, CategoryRepository categoryRepository, UserManager<IdentityUser> userManager)
         {
             this.expensesRepository = expensesRepository;
             this.categoryRepository = categoryRepository;
+            this.userManager = userManager;
         }
 
         [Route("/")]
@@ -28,8 +32,9 @@ namespace HW_7_8.Controllers
             model.Month = currentDate.Month;
             model.Year = currentDate.Year;
             model.MonthName = CultureInfo.InvariantCulture.DateTimeFormat.GetMonthName(model.Month);
-            model.Expenses = expensesRepository.GetExpensesBy(model.Month, model.Year);
-            model.TotalCost = expensesRepository.GetTotalCostByMonth(model.Month, model.Year);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            model.Expenses = expensesRepository.GetExpensesBy(model.Month, model.Year, userId);
+            model.TotalCost = model.Expenses.Sum(e => e.Cost);
             return View(model);
         }
 
@@ -40,8 +45,10 @@ namespace HW_7_8.Controllers
             model.Year = year;
             model.MonthName = monthName;
             model.Month = DateTime.ParseExact(monthName, "MMMM", CultureInfo.InvariantCulture).Month;
-            model.Expenses = expensesRepository.GetExpensesBy(model.Month, model.Year);
-            model.TotalCost = expensesRepository.GetTotalCostByMonth(model.Month, model.Year);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewBag.UserId = userId;
+            model.Expenses = expensesRepository.GetExpensesBy(model.Month, model.Year, userId);
+            model.TotalCost = model.Expenses.Sum(e => e.Cost);
             return View(model);
         }
 
@@ -52,8 +59,9 @@ namespace HW_7_8.Controllers
         }
 
         [HttpPost("/expenses/add")]
-        public IActionResult Add(ExpenseAddViewModel model)
+        public async Task<IActionResult> Add(ExpenseAddViewModel model)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (ModelState.IsValid)
             {
                 Expense expense = new Expense()
@@ -61,8 +69,9 @@ namespace HW_7_8.Controllers
                     Cost = (int)model.Cost,
                     Comment = model.Comment,
                     DateCreated = (DateTime)model.DateCreated,
-                    ExpenseCategory = categoryRepository.GetCategoryById(Convert.ToInt32(model.SelectedCategoryId))
-                };
+                    ExpenseCategory = categoryRepository.GetCategoryById(Convert.ToInt32(model.SelectedCategoryId)),
+                    User = await userManager.FindByIdAsync(userId)
+            };
                 expensesRepository.Add(expense);
                 var monthName = CultureInfo.InvariantCulture.DateTimeFormat.GetMonthName(expense.DateCreated.Month);
                 return RedirectToAction("MonthExpenses", 

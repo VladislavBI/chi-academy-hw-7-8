@@ -37,7 +37,12 @@ namespace HW_7_8.Migrations
                         .HasColumnType("nvarchar(128)")
                         .HasColumnName("name");
 
+                    b.Property<string>("user_id")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("user_id");
 
                     b.ToTable("Categories");
                 });
@@ -67,9 +72,14 @@ namespace HW_7_8.Migrations
                     b.Property<int>("category_id")
                         .HasColumnType("int");
 
+                    b.Property<string>("user_id")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("category_id");
+
+                    b.HasIndex("user_id");
 
                     b.ToTable("Expenses");
                 });
@@ -272,6 +282,15 @@ namespace HW_7_8.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HW_7_8.Data.Models.Category", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("user_id");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("HW_7_8.Data.Models.Expense", b =>
                 {
                     b.HasOne("HW_7_8.Data.Models.Category", "ExpenseCategory")
@@ -280,7 +299,13 @@ namespace HW_7_8.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("user_id");
+
                     b.Navigation("ExpenseCategory");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

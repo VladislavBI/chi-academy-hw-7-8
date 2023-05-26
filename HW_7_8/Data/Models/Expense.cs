@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HW_7_8.Data.Models
@@ -19,5 +19,8 @@ namespace HW_7_8.Data.Models
 
         [ForeignKey("category_id")]
         public Category ExpenseCategory { get; set; }
+
+        [ForeignKey("user_id")]
+        public IdentityUser User { get; set; }
     }
 }
