@@ -31,7 +31,7 @@
                         <ul class="navbar-nav">
                             @if (signInManager.IsSignedIn(User))
                             {
-                                <li class="nav-item mx-2">
+                                <li class="nav-item">
                                     <form method="post" asp-action="Logout" asp-controller="Auth">
                                         <button type="submit" class="nav-link"> Logout </button>
                                     </form>
@@ -39,10 +39,10 @@
                             }
                             else
                             {
-                                <li class="nav-item mx-2">
+                                <li class="nav-item me-2">
                                     <a class="nav-link" asp-action="Register" asp-controller="Auth">Sign up</a>
                                 </li>
-                                <li class="nav-item mx-2">
+                                <li class="nav-item ms-2">
                                     <a class="nav-link" asp-action="Login" asp-controller="Auth">Log in</a>
                                 </li>
                             }
