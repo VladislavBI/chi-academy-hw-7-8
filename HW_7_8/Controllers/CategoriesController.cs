@@ -1,11 +1,13 @@
 ﻿using HW_7_8.Data.Models;
 using HW_7_8.Data.Repositories;
 using HW_7_8.Data.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HW_7_8.Controllers
 {
     [Route("/categories")]
+    [Authorize]
     public class CategoriesController : Controller
     {
         private readonly CategoryRepository categoryRepository;
@@ -39,7 +41,11 @@ namespace HW_7_8.Controllers
             if (ModelState.IsValid)
             {
                 categoryRepository.Add(new Category() { Name = model.Name });
-                return Redirect(model.ReturnUrl);
+
+                if (Url.IsLocalUrl(model.ReturnUrl))
+                    return LocalRedirect(model.ReturnUrl);
+
+                return RedirectToAction("Index");
             }
             return View(model); 
         }
