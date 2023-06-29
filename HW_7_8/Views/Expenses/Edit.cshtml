@@ -1,8 +1,8 @@
 ﻿@model ExpenseEditViewModel
-@inject CategoryRepository Repository
+@inject ICategoryRepository Repository
 @{
     ViewBag.Title = "Edit expense";
-    var categories = Repository.Categories;
+    var categories = Repository.GetCategoriesByUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
     var categoriesSelectList = new List<SelectListItem>();
     foreach (var categoty in categories)
     {

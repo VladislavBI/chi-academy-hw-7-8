@@ -1,8 +1,11 @@
-﻿using HW_7_8.Data.Models;
-using HW_7_8.Data.Repositories;
-using HW_7_8.Data.ViewModels;
+﻿using AutoMapper;
+using HW_7_8.BLL.Models;
+using HW_7_8.BLL.Services;
+using HW_7_8.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace HW_7_8.Controllers
 {
@@ -10,22 +13,29 @@ namespace HW_7_8.Controllers
     [Authorize]
     public class CategoriesController : Controller
     {
-        private readonly CategoryRepository categoryRepository;
+        private readonly ICategoryService _categoryService;
+        private readonly IMapper _mapper;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public CategoriesController(CategoryRepository categoryRepository)
+        public CategoriesController(ICategoryService categoryService, IMapper mapper, UserManager<IdentityUser> userManager)
         {
-            this.categoryRepository = categoryRepository;
+            _categoryService = categoryService;
+            _mapper = mapper;
+            _userManager = userManager;
         }
 
-        [Route("")]
         public IActionResult Index()
         {
-            var model = new CategoriesListViewModel();
-            model.Categories = categoryRepository.Categories;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var categories = _categoryService.GetAllByUserId(userId);
+            var model = new CategoriesEnumerableViewModel()
+            {
+                Categories = categories,
+            };
             return View(model);
         }
 
-        [HttpGet("/categories/add")]
+        [HttpGet("new")]
         public IActionResult Add()
         {
             var model = new CategoryAddViewModel()
@@ -35,50 +45,44 @@ namespace HW_7_8.Controllers
             return View(model);
         }
 
-        [HttpPost("/categories/add")]
-        public IActionResult Add(CategoryAddViewModel model)
+        [HttpPost("new")]
+        public async Task<IActionResult> Add(CategoryAddViewModel model)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
             if (ModelState.IsValid)
             {
-                categoryRepository.Add(new Category() { Name = model.Name });
-
-                if (Url.IsLocalUrl(model.ReturnUrl))
-                    return LocalRedirect(model.ReturnUrl);
-
-                return RedirectToAction("Index");
+                var category = _mapper.Map<CategoryDataModel>(model);
+                _categoryService.Add(category, user);
+                return Redirect(model.ReturnUrl);
             }
             return View(model); 
         }
 
-        [HttpGet("/categories/edit/{id:int}")]
+        [HttpGet("{id:int}")]
         public IActionResult Edit(int id)
         {
-            var category = categoryRepository.GetCategoryById(id);
-            var model = new CategoryEditViewModel()
-            {
-                Id = id,
-                Name = category.Name,
-            };
+            var category = _categoryService.GetCategoryById(id);
+            var model = _mapper.Map<CategoryEditViewModel>(category);
             return View(model);
         }
 
-        [HttpPost("/categories/edit/{id:int}")]
+        [HttpPost("{id:int}")]
         public IActionResult Edit(CategoryEditViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var category = categoryRepository.GetCategoryById(model.Id);
-                category.Name = model.Name;
-                categoryRepository.Update(category);
+                var category = _mapper.Map<CategoryDataModel>(model);
+                _categoryService.Edit(category);
                 return RedirectToAction("Index");
             }
             return View(model);
         }
 
-        [HttpPost("{id:int}")]
+        [HttpPost("{id:int}/delete")]
         public IActionResult Delete(int id)
         {
-            categoryRepository.Delete(id);
+            _categoryService.Delete(id);
             return RedirectToAction("Index");
         }
     }
