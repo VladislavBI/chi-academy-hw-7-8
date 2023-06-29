@@ -1,6 +1,7 @@
-﻿using HW_7_8.Data.Models;
-using HW_7_8.Data.Repositories;
-using HW_7_8.Data.ViewModels;
+﻿using AutoMapper;
+using HW_7_8.BLL.Models;
+using HW_7_8.BLL.Services;
+using HW_7_8.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,78 +14,67 @@ namespace HW_7_8.Controllers
     [Route("/expenses")]
     public class ExpensesController : Controller
     {
-        private readonly ExpenseRepository expensesRepository;
-        private readonly CategoryRepository categoryRepository;
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly IMapper _mapper;
+        private readonly IExpenseService _expenseService;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ExpensesController(ExpenseRepository expensesRepository, CategoryRepository categoryRepository, UserManager<IdentityUser> userManager)
+        public ExpensesController(IMapper mapper, IExpenseService expenseService, UserManager<IdentityUser> userManager)
         {
-            this.expensesRepository = expensesRepository;
-            this.categoryRepository = categoryRepository;
-            this.userManager = userManager;
+            _mapper = mapper;
+            _expenseService = expenseService;
+            _userManager = userManager;
         }
 
+        [Route("")]
         [Route("/")]
         public IActionResult Index()
         {
-            ExpensesListViewModel model = new ExpensesListViewModel();
-            DateTime currentDate = DateTime.Now;
-            model.Month = currentDate.Month;
-            model.Year = currentDate.Year;
-            model.MonthName = CultureInfo.InvariantCulture.DateTimeFormat.GetMonthName(model.Month);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            model.Expenses = expensesRepository.GetExpensesBy(model.Month, model.Year, userId);
-            model.TotalCost = model.Expenses.Sum(e => e.Cost);
+            var expenses = _expenseService.GetCurrentByUserId(userId);
+            ExpensesEnumerableViewModel model = _mapper.Map<ExpensesEnumerableViewModel>(expenses);
             return View(model);
         }
 
-        [HttpGet("/expenses/by-month")]
+        [HttpGet("by-month")]
         public IActionResult MonthExpenses(string monthName, int year)
         {
-            ExpensesListViewModel model = new ExpensesListViewModel();
-            model.Year = year;
-            model.MonthName = monthName;
-            model.Month = DateTime.ParseExact(monthName, "MMMM", CultureInfo.InvariantCulture).Month;
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            ViewBag.UserId = userId;
-            model.Expenses = expensesRepository.GetExpensesBy(model.Month, model.Year, userId);
-            model.TotalCost = model.Expenses.Sum(e => e.Cost);
+            var expenses = _expenseService.GetByMonth(userId, monthName, year);
+            ExpensesEnumerableViewModel model = _mapper.Map<ExpensesEnumerableViewModel>(expenses);
             return View(model);
         }
 
-        [HttpGet("/expenses/add")]
+        [HttpGet("new")]
         public IActionResult Add()
         {
             return View();
         }
 
-        [HttpPost("/expenses/add")]
+        [HttpPost("new")]
         public async Task<IActionResult> Add(ExpenseAddViewModel model)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+
             if (ModelState.IsValid)
             {
-                Expense expense = new Expense()
-                {
-                    Cost = (int)model.Cost,
-                    Comment = model.Comment,
-                    DateCreated = (DateTime)model.DateCreated,
-                    ExpenseCategory = categoryRepository.GetCategoryById(Convert.ToInt32(model.SelectedCategoryId)),
-                    User = await userManager.FindByIdAsync(userId)
-            };
-                expensesRepository.Add(expense);
-                var monthName = CultureInfo.InvariantCulture.DateTimeFormat.GetMonthName(expense.DateCreated.Month);
+                var expense = _mapper.Map<ExpenseAddModel>(model);
+                _expenseService.Add(expense, user);
+
+                var dateCreated = (DateTime)model.DateCreated;
+                var monthName = CultureInfo.InvariantCulture.DateTimeFormat.GetMonthName(dateCreated.Month);
+                
                 return RedirectToAction("MonthExpenses", 
                     new { MonthName = monthName,
-                    Year = expense.DateCreated.Year}) ;
+                    Year = dateCreated.Year}) ;
             }
             return View();
         }
 
-        [HttpGet("/expenses/edit/{id:int}")]
+        [HttpGet("{id:int}")]
         public IActionResult Edit(int id) 
         {
-            var expense = expensesRepository.GetExpenseById(id);
+            var expense = _expenseService.GetById(id);
             ExpenseEditViewModel model = new ExpenseEditViewModel()
             {
                 Id = expense.Id,
@@ -97,25 +87,22 @@ namespace HW_7_8.Controllers
             return View(model);
         }
 
-        [HttpPost("/expenses/edit/{id:int}")]
+        [HttpPost("{id:int}")]
         public IActionResult Edit(ExpenseEditViewModel model)
         {
             if(ModelState.IsValid)
             {
-                var expense = expensesRepository.GetExpenseById(model.Id);
-                expense.Cost = (int)model.Cost;
-                expense.Comment = model.Comment;
-                expense.ExpenseCategory = categoryRepository.GetCategoryById(Convert.ToInt32(model.SelectedCategoryId));
-                expensesRepository.Update(expense);
+                var updatedExpense = _mapper.Map<ExpenseAddModel>(model);
+                _expenseService.Edit(updatedExpense);
                 return Redirect(model.ReturnUrl);
             }
             return View(model);
         }
 
-        [HttpPost("{id:int}")]
+        [HttpPost("{id:int}/delete")]
         public IActionResult Delete(int id)
         {
-            expensesRepository.Delete(id);
+            _expenseService.Delete(id);
             return Redirect(Request.Headers["Referer"].ToString());
         }
     }

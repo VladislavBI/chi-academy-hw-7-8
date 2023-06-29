@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HW_7_8.Data.Models
+namespace HW_7_8.DAL.Entities
 {
     public class Expense
     {

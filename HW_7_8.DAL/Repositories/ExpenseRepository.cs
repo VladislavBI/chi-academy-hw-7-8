@@ -1,10 +1,11 @@
-﻿using HW_7_8.Data.Database;
-using HW_7_8.Data.Models;
+﻿using HW_7_8.DAL.Database;
+using HW_7_8.DAL.Entities;
+using HW_7_8.DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace HW_7_8.Data.Repositories
+namespace HW_7_8.DAL.Repositories
 {
-    public class ExpenseRepository
+    public class ExpenseRepository : IExpenseRepository
     {
         private readonly HomeAccountingDbContext dbContext;
 
@@ -13,10 +14,11 @@ namespace HW_7_8.Data.Repositories
             this.dbContext = dbContext;
         }
 
-        public IEnumerable<Expense> Expenses => dbContext.Expenses.Include(e => e.ExpenseCategory);
-
-        public Expense GetExpenseById(int id)
+        public Expense? GetExpenseById(int id)
             => dbContext.Expenses.Include(e => e.ExpenseCategory).SingleOrDefault(e => e.Id == id);
+
+        public Expense? GetExpenseWithoutCategory(int id)
+            => dbContext.Expenses.SingleOrDefault(e => e.Id == id);
 
         public IEnumerable<Expense> GetExpensesBy(int month, int year) 
             => dbContext.Expenses
@@ -43,7 +45,7 @@ namespace HW_7_8.Data.Repositories
 
         public void Delete (int id)
         {
-            dbContext.Expenses.Remove(GetExpenseById(id));
+            dbContext.Expenses.Remove(GetExpenseWithoutCategory(id));
             dbContext.SaveChanges();
         }
 
@@ -52,6 +54,5 @@ namespace HW_7_8.Data.Repositories
             dbContext.Expenses.Update(expense);
             dbContext.SaveChanges();
         }
-
     }
 }

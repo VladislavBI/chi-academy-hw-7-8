@@ -1,14 +1,12 @@
-﻿using HW_7_8.Data.Models;
+﻿using HW_7_8.DAL.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
 
-namespace HW_7_8.Data.ViewModels
+namespace HW_7_8.BLL.Models
 {
-    public class ExpensesListViewModel
+    public class ExpensesEnumerableModel
     {
-        public IEnumerable<Expense> Expenses { get; set; }
-
-        public double TotalCost { get; set; } = 0;
+        public IEnumerable<Expense>? Expenses { get; set; }
 
         public string MonthName { get; set; }
 
@@ -20,8 +18,13 @@ namespace HW_7_8.Data.ViewModels
 
         public List<SelectListItem>? YearsSelectList { get; set; }
 
-        public ExpensesListViewModel()
+        public ExpensesEnumerableModel()
         {
+            DateTime currentDate = DateTime.Now;
+            Month = currentDate.Month;
+            Year = currentDate.Year;
+            MonthName = CultureInfo.InvariantCulture.DateTimeFormat.GetMonthName(Month);
+
             var monthNames = CultureInfo.InvariantCulture.DateTimeFormat.MonthNames.SkipLast(1).ToArray();
             MonthNamesSelectList = new List<SelectListItem>();
             foreach (var month in monthNames)
@@ -34,7 +37,14 @@ namespace HW_7_8.Data.ViewModels
             foreach (var year in years)
             {
                 YearsSelectList.Add(new SelectListItem { Text = year.ToString(), Value = year.ToString() });
-            }
+            } 
+        }
+
+        public ExpensesEnumerableModel(string monthName, int year)
+        {
+            Year = year;
+            MonthName = monthName;
+            Month = DateTime.ParseExact(monthName, "MMMM", CultureInfo.InvariantCulture).Month;
         }
     }
 }

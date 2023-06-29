@@ -1,11 +1,9 @@
-﻿using HW_7_8.Data.Database;
-using HW_7_8.Data.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using HW_7_8.DAL.Database;
+using HW_7_8.DAL.Entities;
 
-namespace HW_7_8.Data.Repositories
+namespace HW_7_8.DAL.Repositories
 {
-    public class CategoryRepository
+    public class CategoryRepository : ICategoryRepository
     {
         private readonly HomeAccountingDbContext dbContext;
 
@@ -13,12 +11,6 @@ namespace HW_7_8.Data.Repositories
         {
             this.dbContext = dbContext;
         }
-
-        public CategoryRepository()
-        {
-        }
-
-        public IEnumerable<Category> Categories => dbContext.Categories;
 
         public Category GetCategoryById(int id) 
             => dbContext.Categories.SingleOrDefault(c => c.Id == id);

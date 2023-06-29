@@ -1,8 +1,8 @@
-﻿using HW_7_8.Data.Models;
+﻿using HW_7_8.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace HW_7_8.Data.Configurations
+namespace HW_7_8.DAL.Configurations
 {
     public class CategoryEntityTypeConfiguration : IEntityTypeConfiguration<Category>
     {

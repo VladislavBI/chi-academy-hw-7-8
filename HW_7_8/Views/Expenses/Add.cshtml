@@ -1,5 +1,5 @@
 ﻿@model ExpenseAddViewModel
-@inject CategoryRepository Repository
+@inject ICategoryRepository Repository
 @{
     ViewBag.Title = "Add new expense";
     var categories = Repository.GetCategoriesByUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));

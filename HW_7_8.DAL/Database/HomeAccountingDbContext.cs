@@ -1,8 +1,8 @@
-﻿using HW_7_8.Data.Models;
+﻿using HW_7_8.DAL.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace HW_7_8.Data.Database
+namespace HW_7_8.DAL.Database
 {
     public class HomeAccountingDbContext : IdentityDbContext
     {

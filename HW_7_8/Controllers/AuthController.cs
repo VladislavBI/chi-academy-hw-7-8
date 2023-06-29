@@ -1,4 +1,4 @@
-﻿using HW_7_8.Data.ViewModels;
+﻿using HW_7_8.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
